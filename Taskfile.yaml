@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  generate:
+    desc: "Generate code from proto files"
+    cmds:
+      - protoc --go_out=gen/go --go-grpc_out=gen/go proto/sso/sso.proto
+
+    aliases:
+      - gen
+

@@ -7,7 +7,6 @@ import (
 	ssov1 "GRPC/protos/gen/go/tuzov.sso.v1" // импортируем наш прото файл, который мы создали, и говорим что мы импортируем его как ssov1, потому что это имя, которое мы указали в прото файле, и это имя, которое мы указали в файле main.go, и это имя будет использоваться в коде, потому что мы его указали в файле main.go
 
 	auth1 "GRPC/sso/internal/services/auth"
-	"GRPC/sso/internal/storage"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -79,7 +78,7 @@ func (s *ServerAPI) Register(ctx context.Context, req *ssov1.RegisterRequest) (*
 
 	userId, err := s.Auth.Register(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
-		if errors.Is(err, storage.ErrUserExists) {
+		if errors.Is(err, auth1.ErrUserExists) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
 		return nil, status.Error(codes.Internal, "internal error")
@@ -98,7 +97,7 @@ func (s *ServerAPI) IsAdmin(ctx context.Context, req *ssov1.IsAdminRequest) (*ss
 
 	isAdmin, err := s.Auth.IsAdmin(ctx, req.UserId)
 	if err != nil {
-		if errors.Is(err, storage.ErrUserNotFound) {
+		if errors.Is(err, auth1.ErrUserNotFound) {
 			return nil, status.Error(codes.NotFound, "user not found")
 		}
 		return nil, status.Error(codes.Internal, "internal error")

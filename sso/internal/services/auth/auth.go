@@ -59,6 +59,7 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrInvalidAppID       = errors.New("invalid app id")
 	ErrUserExists         = errors.New("user already exists")
+	ErrUserNotFound       = errors.New("user not found")
 )
 
 func (a *Auth) Login(ctx context.Context, email string, password string, appID int) (string, error) { // ТЫК!!! ТЫК!!!   Передача email в метод User из интерфейса userProvider необходима для того, чтобы получить данные о пользователе, который пытается войти в систему. Эта функция не должна соответствовать интерфейсу аутентификации, поскольку она выполняет более низкоуровневую операцию — получение данных о пользователе. Ваша функция Login может использовать другие методы или структуры для выполнения аутентификации, но для получения информации о пользователе она обращается к слою работы с базой данных через интерфейс userProvider.
@@ -141,7 +142,7 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, password strin
 func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 	const op = "auth.IsAdmin"
 
-	log := a.log.With(slog.Int64("userID", userID), slog.String("op", op)) // опять же скажу что в про, такую информацию лучше не логировать, но так как это учебный проект, то допускается
+	log := a.log.With(slog.Int64("userID", userID), slog.String("op", op)) // опять же скажу что в продакшене, такую информацию лучше не логировать, но так как это учебный проект, то допускается
 
 	log.Info("chrecking if user is admin by id")
 

@@ -26,13 +26,19 @@ func MustLoad() *Config {
 		panic("Config path is empty")
 	}
 
-	if _, err := os.Stat(path); os.IsNotExist(err) { // проверка на существование файла по извлечённому пути
-		panic("Config file does not exist: " + path)
+	return MustLoadByPath(path)
+}
+
+// !!!Мы могли юы просто логику этой функции перенести в MustLoad, но мы так делаем для возможно работы с тестами, в тестах мы будем вызывать MustloadByPath, так как она принимает обычный строковый аргумент и у нс проще говоря должно быть фейковое значение, то есть мы передаём тудf уже какую то создланную константу или что то типо того, а не достаём настоящий путь из флага, за счёт этого мы сможем в тестах вызвать на прямую функцию MustLoadByPath и передать туда путь к файлу конфигурации
+func MustLoadByPath(configPath string) *Config {
+	// check if file exists
+	if _, err := os.Stat(configPath); os.IsNotExist(err) { // проверка на существование файла по извлечённому пути
+		panic("Config file does not exist: " + configPath)
 	}
 
-	var config Config // переменная для обозначения структуры, для записи туда
+	var cfg Config // переменная для обозначения структуры, для записи туда
 
-	if err := cleanenv.ReadConfig(path, &config); err != nil { // чтение пути и запись в структуру
+	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil { // чтение пути и запись в структуру
 		panic("Error reading config file: " + err.Error())
 	}
 	/*
@@ -44,7 +50,7 @@ func MustLoad() *Config {
 			panic(fmt.Sprintf("Error parsing grpc timeout: %v", err))
 		}
 	*/
-	return &config
+	return &cfg
 }
 
 // эта функция нужна для того, что бы извлекать флаг и парсить его, а после, функция выше использует эту функцию и достаёт из распаршеного фалага путь к конфигу

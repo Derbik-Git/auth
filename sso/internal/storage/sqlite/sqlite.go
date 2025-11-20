@@ -28,7 +28,7 @@ func (s *Storage) App(ctx context.Context, appID int) (models.App, error) {
 func NewStorage(storagePath string) (*Storage, error) {
 	const op = "storage.sqlite.NewStorage"
 
-	// при создании базы данных указываем путь до самй бд
+	// при создании базы данных указываем путь до самой бд
 	db, err := sql.Open("sqlite3", storagePath)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
